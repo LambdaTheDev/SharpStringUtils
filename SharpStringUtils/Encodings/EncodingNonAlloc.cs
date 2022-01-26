@@ -58,7 +58,7 @@ namespace LambdaTheDev.SharpStringUtils.Encodings
 
 
         // Gets chars from bytes into reusable char array
-        public ArraySegment<char> GetChars(ArraySegment<byte> bytes)
+        public ArraySegment<char> GetCharsNonAlloc(ArraySegment<byte> bytes)
         {
             // Get char count & ensure buffer size is alright
             int charCount = _encoding.GetCharCount(bytes.Array, bytes.Offset, bytes.Count);
@@ -79,7 +79,7 @@ namespace LambdaTheDev.SharpStringUtils.Encodings
             return new ArraySegment<char>(_reusableCharArray, 0, charCount);
         }
 
-        public ArraySegment<char> GetChars(byte[] bytes) => GetChars(new ArraySegment<byte>(bytes));
+        public ArraySegment<char> GetCharsNonAlloc(byte[] bytes) => GetCharsNonAlloc(new ArraySegment<byte>(bytes));
 
 
         // Gets string from provided bytes
@@ -93,7 +93,7 @@ namespace LambdaTheDev.SharpStringUtils.Encodings
         
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void EnsureByteBufferCapacity(int requiredLength)
+        private void EnsureByteBufferCapacity(int requiredLength)
         {
             // Set length variable, set it to current length if != null
             int currentLength = 1;
@@ -118,7 +118,7 @@ namespace LambdaTheDev.SharpStringUtils.Encodings
         
         // Exactly the same as EnsureByteBuff, but for char buffer
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void EnsureCharBufferCapacity(int requiredLength)
+        private void EnsureCharBufferCapacity(int requiredLength)
         {
             int currentLength = 1;
             if (_reusableCharArray != null)

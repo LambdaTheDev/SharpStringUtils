@@ -129,19 +129,7 @@ namespace LambdaTheDev.SharpStringUtils
         {
             return !(lhs.Equals(rhs));
         }
-
-        #endregion
-
-        #region Span integration (since .NET Standard 2.1)
-#if NETSTANDARD2_1_OR_GREATER
-
-        public ReadOnlySpan<char> ToSpan()
-        {
-            ReadOnlySpan<char> span = OriginalString;
-            return span.Slice(Offset, Count);
-        }
-
-#endif
+        
         #endregion
     }
 }
