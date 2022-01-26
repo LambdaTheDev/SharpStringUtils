@@ -8,7 +8,8 @@ namespace SharpStringUtils.PerformanceTests
     {
         private static void Main(string[] args)
         {
-            var summary = BenchmarkRunner.Run<StringSplitterPerfTests>();
+            BenchmarkRunner.Run<Base64PerfTest>();
+            // var summary = BenchmarkRunner.Run<StringSplitterPerfTests>();
             // BenchmarkRunner.Run<EncodingNonAllocPerfTest>();
         }
     }

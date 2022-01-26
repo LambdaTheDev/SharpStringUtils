@@ -5,17 +5,17 @@ namespace LambdaTheDev.SharpStringUtils
 {
     // An ArraySegment/Span equivalent for this library (especially .NET Standard 2.0 where there is no Spans)
     //  used in non-alloc iterations etc
-    public struct StringSegment
+    public readonly struct StringSegment
     {
-        public static readonly StringSegment Null = new StringSegment(null, -1, 0);
-        public static readonly StringSegment Empty = new StringSegment(string.Empty, 0, -1);
+        public static readonly StringSegment Null = new StringSegment(null, 0, -1);
+        public static readonly StringSegment Empty = new StringSegment(string.Empty, -1, 0);
         
         public readonly string OriginalString; // Reference to original string
         public readonly int Offset; // Offset from original string
         public readonly int Count; // Count of characters
 
-        public bool IsNull => Offset == -1;
-        public bool IsEmpty => Count == -1;
+        public bool IsNull => Count == -1;
+        public bool IsEmpty => Offset == -1;
         public bool IsNullOrEmpty => Offset == -1 || Count == -1;
         
 
@@ -47,10 +47,10 @@ namespace LambdaTheDev.SharpStringUtils
             Count = count;
 
             if (str == null)
-                Offset = -1;
+                Count = -1;
             
             else if (string.IsNullOrEmpty(str))
-                Count = -1;
+                Offset = -1;
         }
 
         public StringSegment Slice(int offset, int count = -1)
