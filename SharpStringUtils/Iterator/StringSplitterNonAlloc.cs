@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 /*
  * ORIGINALLY CODED BY: ConnorTron110 (https://github.com/ConnorTron110)
@@ -10,17 +12,18 @@ using System.Collections.Generic;
 namespace LambdaTheDev.SharpStringUtils.Iterator
 {
     // Minimal or zero alloc string iterator
-    public struct StringSplitterNonAlloc : IEnumerable<StringSegment>
+    public struct StringSplitterNonAlloc : IEnumerator<StringSegment>, IEnumerable<StringSegment>
     {
         private readonly string _target;
         private readonly char _separator;
+        private readonly Func<char, bool> _charValidator;
 
         private StringSegment _currentEntry;
         private int _position;
         private bool _ended;
 
 
-        public StringSplitterNonAlloc(string target, char separator)
+        public StringSplitterNonAlloc(string target, char separator, Func<char, bool> charValidator = null)
         {
             _target = target;
             _separator = separator;
@@ -28,13 +31,16 @@ namespace LambdaTheDev.SharpStringUtils.Iterator
             _currentEntry = StringSegment.Null;
             _position = 0;
             _ended = false;
+
+            if (charValidator == null)
+                charValidator = AnyCharPasses;
+
+            _charValidator = charValidator;
         }
 
-        public StringSegment Current()
-        {
-            return _currentEntry;
-        }
+        #region String iterator
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool MoveNext()
         {
             // Ending condition
@@ -59,6 +65,9 @@ namespace LambdaTheDev.SharpStringUtils.Iterator
             // Actual iteration through string
             for (int i = _position; i < _target.Length; i++)
             {
+                if(!_charValidator.Invoke(_target[i]))
+                    ThrowValidationFailed(_target[i]);
+                
                 if (_target[i] == _separator)
                 {
                     _currentEntry = new StringSegment(_target, _position, i - _position);
@@ -75,17 +84,47 @@ namespace LambdaTheDev.SharpStringUtils.Iterator
             return true;
         }
 
-        public IEnumerator<StringSegment> GetEnumerator()
+        #endregion
+
+        #region Rest of IEnumerator/Enumerable implementations
+
+        public void Reset()
         {
-            while (MoveNext())
-            {
-                yield return Current();
-            }
+            _currentEntry = StringSegment.Null;
+            _ended = false;
+            _position = 0;
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
+        StringSegment IEnumerator<StringSegment>.Current
         {
-            return GetEnumerator();
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => _currentEntry;
+        }
+
+
+        object IEnumerator.Current
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => _currentEntry;
+        }
+
+        public IEnumerator<StringSegment> GetEnumerator() => this;
+
+        IEnumerator IEnumerable.GetEnumerator() => this;
+
+        public void Dispose() { }
+
+        #endregion
+
+        
+        // Method that marks every character as valid
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static bool AnyCharPasses(char _) => true;
+
+        // Throws exception when string contains character marked as invalid by validator method
+        private static void ThrowValidationFailed(char c)
+        {
+            throw new ArgumentException("Provided string contains invalid char: " + c + "!");
         }
     }
 }
