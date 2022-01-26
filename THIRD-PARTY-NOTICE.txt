@@ -1,0 +1,3 @@
+In this library, following 3rd party content is used:
+- https://github.com/ramonsmits/Base64Encoder, licensed under BSD-2 license. Original code was modified to reduce runtime allocations + to comply with rest of SharpStringUtils code
+- StringSplitterNonAlloc algorithm was originally designed by: https://github.com/ConnorTron110, licensed under MIT license. Original code was modified to increase algorithm's performance
