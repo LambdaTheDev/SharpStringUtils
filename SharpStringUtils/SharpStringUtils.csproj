@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>netstandard2.0;netstandard2.1;netcoreapp5.0</TargetFrameworks>
+        <RootNamespace>LambdaTheDev.SharpStringUtils</RootNamespace>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
+
+</Project>
