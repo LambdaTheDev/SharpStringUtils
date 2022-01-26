@@ -4,6 +4,13 @@
         <TargetFrameworks>netstandard2.0;netstandard2.1;netcoreapp5.0</TargetFrameworks>
         <RootNamespace>LambdaTheDev.SharpStringUtils</RootNamespace>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <Authors>LambdaTheDev</Authors>
+        <Description>This library allows you to do high-performance or non-alloc operations on strings.</Description>
+        <PackageProjectUrl>https://github.com/LambdaTheDev/SharpStringUtils</PackageProjectUrl>
+        <PackageLicenseUrl>MIT</PackageLicenseUrl>
+        <RepositoryUrl>https://github.com/LambdaTheDev/SharpStringUtils</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageTags>performance, high performance, non alloc, string, strings, fast</PackageTags>
     </PropertyGroup>
 
 </Project>
