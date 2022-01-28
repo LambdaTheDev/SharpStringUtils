@@ -28,6 +28,18 @@ namespace LambdaTheDev.SharpStringUtils.Encodings
             _encoding = new EncodingNonAlloc(encoding);
         }
 
+        // Sets raw data to output buffer.
+        // NOTE: This method overrides all content & copies data from ArraySegment to output buffer
+        public void SetRawData(ArraySegment<byte> data)
+        {
+            // Reset & ensure capacity
+            Clear();
+            EnsureArrayCapacity(ref _outputByteBuffer, data.Count, 0);
+            
+            // And copy content from ArraySegment
+            Buffer.BlockCopy(data.Array, data.Offset, _outputByteBuffer, 0, data.Count);
+        }
+
         // This methods causes encoding errors. For now, less-optimized string one should be fine
         // // Writes separator into buffer & appends StringSegment to rest
         // public void Append(StringSegment segment, char separator)
