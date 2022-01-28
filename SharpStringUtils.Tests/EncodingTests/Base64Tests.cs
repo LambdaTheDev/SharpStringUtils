@@ -1,5 +1,6 @@
 using System;
 using LambdaTheDev.SharpStringUtils.Encodings.Base;
+using LambdaTheDev.SharpStringUtils.Extensions;
 using NUnit.Framework;
 
 namespace LambdaTheDev.SharpStringUtils.Tests.EncodingTests
@@ -17,7 +18,7 @@ namespace LambdaTheDev.SharpStringUtils.Tests.EncodingTests
             rng.NextBytes(randomBytes);
 
             string systemBase64 = Convert.ToBase64String(randomBytes);
-            string nonAllocBase64 = _base64.ToBase(new ArraySegment<byte>(randomBytes));
+            string nonAllocBase64 = _base64.ToBaseString(new ArraySegment<byte>(randomBytes));
             
             Assert.True(systemBase64 == nonAllocBase64);
         }

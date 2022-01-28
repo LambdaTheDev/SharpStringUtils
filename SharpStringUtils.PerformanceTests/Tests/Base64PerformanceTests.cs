@@ -1,6 +1,7 @@
 using System;
 using BenchmarkDotNet.Attributes;
 using LambdaTheDev.SharpStringUtils.Encodings.Base;
+using LambdaTheDev.SharpStringUtils.Extensions;
 
 namespace LambdaTheDev.SharpStringUtils.PerformanceTests.Tests
 {

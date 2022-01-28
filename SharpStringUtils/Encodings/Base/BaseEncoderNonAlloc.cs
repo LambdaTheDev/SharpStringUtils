@@ -22,8 +22,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 using System;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
+
 
 // PREVIOUSLY: Exyll
 namespace LambdaTheDev.SharpStringUtils.Encodings.Base
@@ -52,14 +51,6 @@ namespace LambdaTheDev.SharpStringUtils.Encodings.Base
 			Map = new byte[128];
 			for (byte i = 0; i < characterSet.Length; i++)
 				Map[(byte)characterSet[i]] = i;
-		}
-
-		// WARNING: Benchmarks show that System allocates as much memory as this plus
-		//  it uses marginally MORE time to compute Base hash.
-		public string ToBase(ArraySegment<byte> data)
-		{
-			ArraySegment<char> reusableChars = ToBaseNonAlloc(data);
-			return new string(reusableChars.Array, reusableChars.Offset, reusableChars.Count);
 		}
 
 		public ArraySegment<char> ToBaseNonAlloc(ArraySegment<byte> data)
@@ -130,9 +121,7 @@ namespace LambdaTheDev.SharpStringUtils.Encodings.Base
 			if(_reusableS.Length < required)
 				_reusableS = new char[(int) (1.5f * required)];
 		}
-
-		public ArraySegment<byte> FromBaseNonAlloc(string data) => FromBaseNonAlloc(new StringSegment(data));
-
+		
 		public ArraySegment<byte> FromBaseNonAlloc(StringSegment data)
 		{
 			int length = data.IsNull ? 0 : data.Count;
@@ -201,22 +190,12 @@ namespace LambdaTheDev.SharpStringUtils.Encodings.Base
 			}
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public byte[] FromBase(string data) => FromBase(new StringSegment(data));
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public byte[] FromBase(StringSegment data)
+		// Since I made non-alloc upgrades, this is no longer thread safe - copies needs to be made!
+		protected BaseEncoderNonAlloc CopyEncoder()
 		{
-			ArraySegment<byte> bytes = FromBaseNonAlloc(data);
-#if NETSTANDARD2_1_OR_GREATER
-			return bytes.ToArray();
-#endif
-			
-			byte[] newBytes = new byte[bytes.Count];
-			Buffer.BlockCopy(bytes.Array, bytes.Offset, newBytes, 0, bytes.Count);
-			return newBytes;
+			return new BaseEncoderNonAlloc(CharacterSet, PaddingEnabled);
 		}
-		
+
 		private void PutStringInReusableBuffer(StringSegment value)
 		{
 			if (value.OriginalString == null)

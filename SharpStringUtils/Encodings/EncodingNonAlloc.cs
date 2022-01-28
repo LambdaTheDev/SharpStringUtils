@@ -2,6 +2,7 @@ using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
+using LambdaTheDev.SharpStringUtils.Extensions;
 
 namespace LambdaTheDev.SharpStringUtils.Encodings
 {
@@ -40,19 +41,6 @@ namespace LambdaTheDev.SharpStringUtils.Encodings
             return new ArraySegment<byte>(_reusableByteArray, 0, length);
         }
 
-        // Gets newly allocated byte buffer from the string
-        public byte[] GetBytes(string str)
-        {
-            ArraySegment<byte> nonAllocBytes = GetBytesNonAlloc(new StringSegment(str));
-#if NETSTANDARD2_1_OR_GREATER
-            return nonAllocBytes.ToArray();
-#endif
-            
-            byte[] bytes = new byte[nonAllocBytes.Count];
-            Buffer.BlockCopy(nonAllocBytes.Array, nonAllocBytes.Offset, bytes, 0, nonAllocBytes.Count);
-            return bytes;
-        }
-
         // Allocates new unmanaged memory & fills it with string content
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public unsafe IntPtr GetUnsafeBytes(StringSegment segment, out int length)
@@ -70,9 +58,11 @@ namespace LambdaTheDev.SharpStringUtils.Encodings
                 return unmanagedBuffer;
             }
         }
-        
-        public ArraySegment<byte> GetBytesNonAlloc(string text) => GetBytesNonAlloc(new StringSegment(text));
 
+        // Frees unmanaged bytes
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void FreeUnsafeBytes(IntPtr ptr) => Marshal.FreeHGlobal(ptr);
+        
 
         // Gets chars from bytes into reusable char array
         public ArraySegment<char> GetCharsNonAlloc(ArraySegment<byte> bytes)
@@ -102,9 +92,6 @@ namespace LambdaTheDev.SharpStringUtils.Encodings
             return new ArraySegment<char>(_reusableCharArray, 0, charCount);
         }
 
-        public ArraySegment<char> GetCharsNonAlloc(byte[] bytes) => GetCharsNonAlloc(new ArraySegment<byte>(bytes));
-
-
         // Gets string from provided bytes. Aggressive inlined, due to it's a method wrapper
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public string GetString(ArraySegment<byte> bytes)
@@ -112,10 +99,6 @@ namespace LambdaTheDev.SharpStringUtils.Encodings
             // Note: I have not found any better solution for GetString(...)
             return Encoding.GetString(bytes.Array, bytes.Offset, bytes.Count);
         }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public string GetString(byte[] bytes) => GetString(new ArraySegment<byte>(bytes));
-        
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void EnsureByteBufferCapacity(int requiredLength)

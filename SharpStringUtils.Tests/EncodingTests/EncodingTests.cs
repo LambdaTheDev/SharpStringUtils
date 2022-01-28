@@ -1,5 +1,6 @@
 using System.Text;
 using LambdaTheDev.SharpStringUtils.Encodings;
+using LambdaTheDev.SharpStringUtils.Extensions;
 using NUnit.Framework;
 
 namespace LambdaTheDev.SharpStringUtils.Tests.EncodingTests

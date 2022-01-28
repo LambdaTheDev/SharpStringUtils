@@ -49,11 +49,5 @@ namespace LambdaTheDev.SharpStringUtils.Encodings.Base
             PlusChar = plusChar;
             SlashChar = slashChar;
         }
-
-        // Due to now, this encoder is not thread-safe, I need to make copies
-        public Base64EncoderNonAlloc CopyEncoder()
-        {
-            return new Base64EncoderNonAlloc(PlusChar, SlashChar, PaddingEnabled);
-        }
     }
 }

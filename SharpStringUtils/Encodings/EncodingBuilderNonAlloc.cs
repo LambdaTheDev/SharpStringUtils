@@ -58,7 +58,7 @@ namespace LambdaTheDev.SharpStringUtils.Encodings
             if (separatorLength > 0)
             {
                 // If separator length > 0, then ensure capacity & write separator
-                ArraySegment<byte> separatorBytes = _encoding.GetBytesNonAlloc(separator);
+                ArraySegment<byte> separatorBytes = _encoding.GetBytesNonAlloc(new StringSegment(separator));
                 EnsureArrayCapacity(ref _separatorBuffer, separatorBytes.Count, 0);
                 
                 // Separator is rarely a high number, so Ill just for(int i...) it...
@@ -122,19 +122,6 @@ namespace LambdaTheDev.SharpStringUtils.Encodings
         public ArraySegment<byte> GetBytesNonAlloc()
         {
             return new ArraySegment<byte>(_outputByteBuffer, 0, _appendedBytes);
-        }
-
-        // Gets allocated output
-        public byte[] GetBytes()
-        {
-            ArraySegment<byte> nonAllocBytes = GetBytesNonAlloc();
-#if NETSTANDARD2_1_OR_GREATER
-            return nonAllocBytes.ToArray();
-#endif
-            
-            byte[] bytes = new byte[nonAllocBytes.Count];
-            Buffer.BlockCopy(nonAllocBytes.Array, nonAllocBytes.Offset, bytes, 0, nonAllocBytes.Count);
-            return bytes;
         }
 
         // Gets allocated string
