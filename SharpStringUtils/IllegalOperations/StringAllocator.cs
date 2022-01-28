@@ -35,6 +35,9 @@ namespace LambdaTheDev.SharpStringUtils.IllegalOperations
             if(!InitializedSuccessfully)
                 throw new Exception("Could not allocate a string, method string.FastAllocateString was undetected/unreachable!");
 
+            if(length < 0)
+                throw new ArgumentOutOfRangeException(nameof(length), "Length must be a positive number!");
+            
             // Put argument to object array & invoke reflection method
             Argument[0] = length;
             object reflectionResult = FastAllocateStringMethod.Invoke(null, Argument);

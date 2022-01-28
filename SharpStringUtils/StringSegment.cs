@@ -23,8 +23,22 @@ namespace LambdaTheDev.SharpStringUtils
         public StringSegment(string str)
         {
             OriginalString = str;
-            Offset = 0;
-            Count = str.Length;
+
+            if (str == null)
+            {
+                Offset = 0;
+                Count = -1;
+            }
+            else if (string.IsNullOrEmpty(str))
+            {
+                Offset = -1;
+                Count = 0;
+            }
+            else
+            {
+                Offset = 0;
+                Count = str.Length;
+            }
         }
 
         // Constructor for string with offset & count
@@ -59,12 +73,12 @@ namespace LambdaTheDev.SharpStringUtils
                 throw new ArgumentOutOfRangeException(nameof(offset), "Offset must be a positive number!");
             
             if(count < -1)
-                throw new ArgumentOutOfRangeException(nameof(count), "Count must be a positive number!");
+                throw new ArgumentOutOfRangeException(nameof(count), "Count must be a positive number, or -1!");
 
             if (count == -1)
-                count = Count;
+                count = OriginalString.Length - Offset - offset;
             
-            return new StringSegment(OriginalString, Offset + offset, count - (offset + Offset));
+            return new StringSegment(OriginalString, Offset + offset, count);
         }
         
         #region Operators & system overrides
@@ -114,6 +128,12 @@ namespace LambdaTheDev.SharpStringUtils
 
         public override string ToString()
         {
+            if (Offset == -1)
+                return string.Empty;
+
+            if (Count == -1)
+                return null;
+            
             if (Offset == 0 && Count == OriginalString.Length)
                 return OriginalString;
 

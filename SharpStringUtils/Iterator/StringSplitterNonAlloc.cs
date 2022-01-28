@@ -12,6 +12,7 @@ using System.Runtime.CompilerServices;
 namespace LambdaTheDev.SharpStringUtils.Iterator
 {
     // Minimal or zero alloc string iterator
+    // todo: Make SplitFirst() method & make different struct for enumerator
     public struct StringSplitterNonAlloc : IEnumerator<StringSegment>, IEnumerable<StringSegment>
     {
         private readonly string _target;

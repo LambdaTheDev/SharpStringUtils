@@ -22,6 +22,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 using System;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 // PREVIOUSLY: Exyll
 namespace LambdaTheDev.SharpStringUtils.Encodings.Base
@@ -197,6 +199,22 @@ namespace LambdaTheDev.SharpStringUtils.Encodings.Base
 					return new ArraySegment<byte>(_reusableData, 0, bytes - padding);
 				}
 			}
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public byte[] FromBase(string data) => FromBase(new StringSegment(data));
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public byte[] FromBase(StringSegment data)
+		{
+			ArraySegment<byte> bytes = FromBaseNonAlloc(data);
+#if NETSTANDARD2_1_OR_GREATER
+			return bytes.ToArray();
+#endif
+			
+			byte[] newBytes = new byte[bytes.Count];
+			Buffer.BlockCopy(bytes.Array, bytes.Offset, newBytes, 0, bytes.Count);
+			return newBytes;
 		}
 		
 		private void PutStringInReusableBuffer(StringSegment value)
