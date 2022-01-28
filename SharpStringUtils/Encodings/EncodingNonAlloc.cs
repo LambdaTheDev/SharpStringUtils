@@ -60,18 +60,24 @@ namespace LambdaTheDev.SharpStringUtils.Encodings
         // Gets chars from bytes into reusable char array
         public ArraySegment<char> GetCharsNonAlloc(ArraySegment<byte> bytes)
         {
-            // Get char count & ensure buffer size is alright
-            int charCount = _encoding.GetCharCount(bytes.Array, bytes.Offset, bytes.Count);
-            EnsureCharBufferCapacity(charCount);
-
+            int charCount;
+            
             // In unsafe block, get chars & put them in a buffer
             unsafe
             {
                 fixed (byte* byteBufferPtr = bytes.Array)
-                fixed (char* charBufferPtr = _reusableCharArray)
                 {
-                    _encoding.GetChars(byteBufferPtr + bytes.Offset, bytes.Count, charBufferPtr,
-                        _reusableCharArray.Length);
+                    // Get char count & ensure buffer size is alright
+                    
+                    // WARNING: No matter what, _encoding.GetCharCount(...) allocates...
+                    charCount = _encoding.GetCharCount(byteBufferPtr + bytes.Offset, bytes.Count);
+                    EnsureCharBufferCapacity(charCount);
+                    
+                    fixed (char* charBufferPtr = _reusableCharArray)
+                    {
+                        _encoding.GetChars(byteBufferPtr + bytes.Offset, bytes.Count, charBufferPtr,
+                            charCount);
+                    }
                 }
             }
             
