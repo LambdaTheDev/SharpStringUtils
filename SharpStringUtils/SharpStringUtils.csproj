@@ -11,7 +11,7 @@
         <RepositoryUrl>https://github.com/LambdaTheDev/SharpStringUtils</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <PackageTags>performance, high performance, non alloc, string, strings, fast</PackageTags>
-        <PackageVersion>1.2.2</PackageVersion>
+        <PackageVersion>1.2.3</PackageVersion>
     </PropertyGroup>
 
 </Project>

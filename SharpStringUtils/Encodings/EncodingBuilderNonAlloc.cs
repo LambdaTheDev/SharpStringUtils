@@ -80,7 +80,10 @@ namespace LambdaTheDev.SharpStringUtils.Encodings
                 appendedBytes += separatorLength;
             }
 
+            // Get content bytes & ensure output buffer
             ArraySegment<byte> contentBytes = _encoding.GetBytesNonAlloc(chars);
+            EnsureArrayCapacity(ref _outputByteBuffer, _appendedBytes + contentBytes.Count, _appendedBytes);
+            
             // Append actual content in an unsafe way
             unsafe
             {
