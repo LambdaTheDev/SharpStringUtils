@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -53,23 +54,46 @@ namespace LambdaTheDev.SharpStringUtils.Encodings
         // Writes separator into buffer & appends StringSegment to rest
         public void Append(StringSegment segment, string separator = null)
         {
-            // Get separator bytes length & append it
-            int separatorLength = separator?.Length ?? 0;
-            if (separatorLength > 0)
+            int separatorLength = ParseSeparator(separator);
+            InternalAppend(segment, separatorLength);
+        }
+        
+        // Appends chars segment to buffer.
+        // todo: Allow StringSegment to accept ArraySegment of chars, string, & pointers
+        public void Append(ArraySegment<char> chars, string separator = null)
+        {
+            // Get length of separator
+            int separatorLength = ParseSeparator(separator);
+            
+            // If array == null, then return
+            if (chars.Array == null)
+                return;
+
+            int appendedBytes = 0;
+            // If needed, append separator
+            if (_appendedBytes > 0 && separatorLength > 0)
             {
-                // If separator length > 0, then ensure capacity & write separator
-                ArraySegment<byte> separatorBytes = _encoding.GetBytesNonAlloc(new StringSegment(separator));
-                EnsureArrayCapacity(ref _separatorBuffer, separatorBytes.Count, 0);
+                // Append separator using loop
+                for (int i = 0; i < separatorLength; i++)
+                    _outputByteBuffer[_appendedBytes + i] = _separatorBuffer[i];
                 
-                // Separator is rarely a high number, so Ill just for(int i...) it...
-                for (int i = 0; i < separatorBytes.Count; i++)
-                    _separatorBuffer[i] = separatorBytes.Array[i];
-                
-                // Set separator length to byte length
-                separatorLength = separatorBytes.Count;
+                appendedBytes += separatorLength;
+            }
+
+            ArraySegment<byte> contentBytes = _encoding.GetBytesNonAlloc(chars);
+            // Append actual content in an unsafe way
+            unsafe
+            {
+                fixed (byte* outputPtr = &_outputByteBuffer[_appendedBytes + appendedBytes])
+                fixed (byte* contentPtr = contentBytes.Array)
+                {
+                    Buffer.MemoryCopy(contentPtr, outputPtr, _outputByteBuffer.Length, contentBytes.Count);
+                    appendedBytes += contentBytes.Count;
+                }
             }
             
-            InternalAppend(segment, separatorLength);
+            // Update global appended bytes
+            _appendedBytes += appendedBytes;
         }
 
         // Performs actual string segment appending
@@ -110,6 +134,28 @@ namespace LambdaTheDev.SharpStringUtils.Encodings
             
             // Update global appended bytes
             _appendedBytes += appendedBytes;
+        }
+
+        // Returns how much bytes does separator take
+        private int ParseSeparator(string separator)
+        {
+            // Get separator bytes length & append it
+            int separatorLength = separator?.Length ?? 0;
+            if (separatorLength > 0)
+            {
+                // If separator length > 0, then ensure capacity & write separator
+                ArraySegment<byte> separatorBytes = _encoding.GetBytesNonAlloc(new StringSegment(separator));
+                EnsureArrayCapacity(ref _separatorBuffer, separatorBytes.Count, 0);
+                
+                // Separator is rarely a high number, so Ill just for(int i...) it...
+                for (int i = 0; i < separatorBytes.Count; i++)
+                    _separatorBuffer[i] = separatorBytes.Array[i];
+                
+                // Set separator length to byte length
+                separatorLength = separatorBytes.Count;
+            }
+
+            return separatorLength;
         }
 
         // Resets position & allows for new usage

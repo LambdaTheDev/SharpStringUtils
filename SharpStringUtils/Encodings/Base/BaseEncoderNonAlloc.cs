@@ -191,7 +191,7 @@ namespace LambdaTheDev.SharpStringUtils.Encodings.Base
 		}
 
 		// Since I made non-alloc upgrades, this is no longer thread safe - copies needs to be made!
-		protected BaseEncoderNonAlloc CopyEncoder()
+		public BaseEncoderNonAlloc CopyEncoder()
 		{
 			return new BaseEncoderNonAlloc(CharacterSet, PaddingEnabled);
 		}

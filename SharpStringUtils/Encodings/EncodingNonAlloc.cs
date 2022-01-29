@@ -2,7 +2,6 @@ using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
-using LambdaTheDev.SharpStringUtils.Extensions;
 
 namespace LambdaTheDev.SharpStringUtils.Encodings
 {
@@ -39,6 +38,16 @@ namespace LambdaTheDev.SharpStringUtils.Encodings
             
             // Return segment of new buffer
             return new ArraySegment<byte>(_reusableByteArray, 0, length);
+        }
+        
+        // Gets reusable bytes from the chars segment
+        public ArraySegment<byte> GetBytesNonAlloc(ArraySegment<char> chars)
+        {
+            if(chars.Array == null || chars.Count == 0)
+                return new ArraySegment<byte>(Array.Empty<byte>());
+
+            int bytes = Encoding.GetBytes(chars.Array, chars.Offset, chars.Count, _reusableByteArray, 0);
+            return new ArraySegment<byte>(_reusableByteArray, 0, bytes);
         }
 
         // Allocates new unmanaged memory & fills it with string content
