@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
 using System.Text;
+using LambdaTheDev.SharpStringUtils.Extensions;
 
 namespace LambdaTheDev.SharpStringUtils.Encodings
 {
@@ -82,7 +83,7 @@ namespace LambdaTheDev.SharpStringUtils.Encodings
 
             // Get content bytes & ensure output buffer
             ArraySegment<byte> contentBytes = _encoding.GetBytesNonAlloc(chars);
-            EnsureArrayCapacity(ref _outputByteBuffer, _appendedBytes + contentBytes.Count, _appendedBytes);
+            EnsureArrayCapacity(ref _outputByteBuffer, _appendedBytes + contentBytes.Count + appendedBytes, _appendedBytes + appendedBytes);
             
             // Append actual content in an unsafe way
             unsafe
@@ -122,7 +123,7 @@ namespace LambdaTheDev.SharpStringUtils.Encodings
             
             // Get StringSegment bytes & ensure output capacity
             ArraySegment<byte> contentBytes = _encoding.GetBytesNonAlloc(content);
-            EnsureArrayCapacity(ref _outputByteBuffer, _appendedBytes + contentBytes.Count, _appendedBytes);
+            EnsureArrayCapacity(ref _outputByteBuffer, _appendedBytes + contentBytes.Count + appendedBytes, _appendedBytes + appendedBytes);
 
             // Append actual content in an unsafe way
             unsafe
@@ -157,7 +158,7 @@ namespace LambdaTheDev.SharpStringUtils.Encodings
                 // Set separator length to byte length
                 separatorLength = separatorBytes.Count;
             }
-
+            
             return separatorLength;
         }
 

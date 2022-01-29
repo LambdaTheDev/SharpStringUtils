@@ -1,6 +1,7 @@
 using System;
 using System.Text;
 using LambdaTheDev.SharpStringUtils.Encodings;
+using LambdaTheDev.SharpStringUtils.Extensions;
 using NUnit.Framework;
 
 namespace LambdaTheDev.SharpStringUtils.Tests.EncodingTests
@@ -66,6 +67,23 @@ namespace LambdaTheDev.SharpStringUtils.Tests.EncodingTests
             string output = _builder.GetString();
             
             Assert.True(expected == output);
+        }
+
+        [Test]
+        public void MixedTest()
+        {
+            string a = "xyzdsamd90u29r8nm8fy8wenfym81ur908m139rdmeqaf";
+            string b = "kosjafcm9qe8fm09if90mqe9um980wfu82m89m9i89u9i9";
+            char[] array = b.ToCharArray();
+            ArraySegment<char> segment = new ArraySegment<char>(array);
+            
+            _builder.Clear();
+            _builder.Append(a, ".");
+            _builder.Append(segment, ".");
+
+            string joined = string.Join('.', a, b);
+            
+            Assert.True(joined == _builder.GetString());
         }
     }
 }

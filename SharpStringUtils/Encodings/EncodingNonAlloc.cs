@@ -61,7 +61,7 @@ namespace LambdaTheDev.SharpStringUtils.Encodings
             fixed (char* originalStrPtr = segment.OriginalString)
             {
                 // Get string's bytes count, allocate buffer, & fill it
-                int strByteCount= Encoding.GetByteCount(originalStrPtr + segment.Offset, segment.Count);
+                int strByteCount = Encoding.GetByteCount(originalStrPtr + segment.Offset, segment.Count);
                 IntPtr unmanagedBuffer = Marshal.AllocHGlobal(strByteCount);
                 Encoding.GetBytes(originalStrPtr + segment.Offset, segment.Count, (byte*) unmanagedBuffer, strByteCount);
 
