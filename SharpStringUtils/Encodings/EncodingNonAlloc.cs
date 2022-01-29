@@ -46,6 +46,9 @@ namespace LambdaTheDev.SharpStringUtils.Encodings
             if(chars.Array == null || chars.Count == 0)
                 return new ArraySegment<byte>(Array.Empty<byte>());
 
+            int byteCount = Encoding.GetByteCount(chars.Array, chars.Offset, chars.Count);
+            EnsureByteBufferCapacity(byteCount);
+            
             int bytes = Encoding.GetBytes(chars.Array, chars.Offset, chars.Count, _reusableByteArray, 0);
             return new ArraySegment<byte>(_reusableByteArray, 0, bytes);
         }
