@@ -42,6 +42,7 @@ namespace LambdaTheDev.SharpStringUtils.BaseEncodings
 		private char[] _reusableS = new char[32];
 		private char[] _reusableString = new char[32];
 		private byte[] _reusableData = new byte[64];
+		private bool _mapped;
 
 
 		public BaseEncoderNonAlloc(char[] characterSet, bool paddingEnabled)
@@ -50,12 +51,21 @@ namespace LambdaTheDev.SharpStringUtils.BaseEncodings
 			CharacterSet = characterSet;
 
 			Map = new byte[128];
-			for (byte i = 0; i < characterSet.Length; i++)
-				Map[(byte)characterSet[i]] = i;
 		}
 
+		// YOU MUST CALL THIS METHOD AFTER INITIALIZATION!!!
+		protected void ReMapCharset()
+		{
+			for (byte i = 0; i < CharacterSet.Length; i++)
+				Map[(byte)CharacterSet[i]] = i;
+
+			_mapped = true;
+		}
+		
 		public ArraySegment<char> ToBaseNonAlloc(ArraySegment<byte> data)
 		{
+			AssertMapped();
+			
 			int length;
 			if (data == null || 0 == (length = data.Count))
 				return new ArraySegment<char>(Array.Empty<char>());
@@ -125,6 +135,8 @@ namespace LambdaTheDev.SharpStringUtils.BaseEncodings
 		
 		public ArraySegment<byte> FromBaseNonAlloc(StringSegment data)
 		{
+			AssertMapped();
+			
 			int length = data.IsNull ? 0 : data.Length;
 
 			if (length == 0)
@@ -214,6 +226,12 @@ namespace LambdaTheDev.SharpStringUtils.BaseEncodings
 		{
 			if(_reusableData.Length < required)
 				_reusableData = new byte[(int) (1.5f * required)];
+		}
+
+		private void AssertMapped()
+		{
+			if (!_mapped)
+				throw new Exception("Inheritor of this class has not called ReMapCharset() method!");
 		}
 	}
 }

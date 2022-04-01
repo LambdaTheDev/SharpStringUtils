@@ -31,6 +31,13 @@ namespace LambdaTheDev.SharpStringUtils.BaseEncodings
     {
         const string CharacterSetBase = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
+        private static readonly char[] Base64Chars = new[]
+        {
+            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+            'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '\\',
+        };
+
         public readonly char PlusChar;
         public readonly char SlashChar;
 
@@ -44,10 +51,14 @@ namespace LambdaTheDev.SharpStringUtils.BaseEncodings
         // public static readonly Base64Encoder FileEncoding = new Base64Encoder('+', '-', false);
 
         public Base64EncoderNonAlloc(char plusChar, char slashChar, bool paddingEnabled)
-            : base((CharacterSetBase + plusChar + slashChar).ToCharArray(), paddingEnabled)
+            : base(Base64Chars, paddingEnabled)
         {
             PlusChar = plusChar;
             SlashChar = slashChar;
+            Base64Chars[Base64Chars.Length - 1] = slashChar;
+            Base64Chars[Base64Chars.Length - 2] = plusChar;
+            
+            ReMapCharset();
         }
     }
 }
