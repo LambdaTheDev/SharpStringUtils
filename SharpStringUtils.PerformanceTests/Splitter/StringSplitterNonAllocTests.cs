@@ -10,6 +10,8 @@ namespace LambdaTheDev.SharpStringUtils.PerformanceTests.Splitter
         private readonly StringSegment _segment = new StringSegment(ToSplit);
         
         
+        // Cannot get rid of 96-byte allocation, probably caused by boxing.
+        //  I tried to get rid IEnumerable interface from StringSplitterNonAlloc, but allocation still existed
         [Benchmark]
         public void SplitString()
         {
