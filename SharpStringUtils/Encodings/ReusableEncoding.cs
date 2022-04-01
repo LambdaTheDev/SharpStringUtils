@@ -1,5 +1,6 @@
 using System;
 using System.Text;
+using LambdaTheDev.SharpStringUtils.Helpers;
 using LambdaTheDev.SharpStringUtils.Segment;
 
 namespace LambdaTheDev.SharpStringUtils.Encodings
@@ -64,7 +65,7 @@ namespace LambdaTheDev.SharpStringUtils.Encodings
         {
             // Get how much bytes do we need & ensure buffer
             int neededBytes = RawEncoding.GetByteCount(cPtr, length);
-            EnsureBufferCapacity(ref _reusableBytes, neededBytes);
+            ArrayHelpers.ExpandArrayByPowOfTwo(ref _reusableBytes, neededBytes);
                     
             // Copy contents to reusable byte[]
             fixed (byte* bPtr = _reusableBytes)
@@ -87,7 +88,7 @@ namespace LambdaTheDev.SharpStringUtils.Encodings
                     // Get how much chars ArraySegment can give
                     // WARN: RawEncoding.GetCharCount(...) allocates...
                     int charCount = RawEncoding.GetCharCount(bPtr, bytes.Count);
-                    EnsureBufferCapacity(ref _reusableChars, charCount);
+                    ArrayHelpers.ExpandArrayByPowOfTwo(ref _reusableChars, charCount);
 
                     // Get ptr to reusable char[] & return
                     fixed (char* cPtr = _reusableChars)
@@ -104,27 +105,6 @@ namespace LambdaTheDev.SharpStringUtils.Encodings
         {
             ArraySegment<char> reusableChars = GetReusableChars(bytes);
             return reusableChars.ToString();
-        }
-        
-        // Method that ensures that array's sizes are alright
-        private void EnsureBufferCapacity<T>(ref T[] array, int requiredLength, int copyContentToIndex = -1)
-        {
-            // If size alr, then do nothing
-            int currentLength = array.Length;
-            if (currentLength >= requiredLength)
-                return;
-
-            // Grow using powers of 2 to find new length
-            while (currentLength < requiredLength)
-                currentLength *= 2;
-            
-            // Allocate new array & copy content, if necessary
-            T[] newArray = new T[currentLength];
-            
-            if(copyContentToIndex > 0)
-                Array.Copy(array, newArray, copyContentToIndex);
-
-            array = newArray;
         }
     }
 }
