@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using LambdaTheDev.SharpStringUtils.Splitter;
 
 namespace LambdaTheDev.SharpStringUtils.Segment
 {
@@ -18,7 +20,23 @@ namespace LambdaTheDev.SharpStringUtils.Segment
             int length = to == -1 ? Length - from : to;
             return new StringSegment(TargetString, Offset + from, length);
         }
+
+        // 2 split methods that return iterator that can be used in foreach loop.
+        // CharsValidator func allows you to validate characters while splitting,
+        // so you don't need to make 2nd foreach validation check
         
+        // This method splits using single char separator (it is faster)
+        public StringSplitterNonAlloc Split(char splitter, Func<char, bool> charsValidator = null)
+        {
+            return new StringSplitterNonAlloc(this, splitter, charsValidator);
+        }
+
+        // This method splits using string pattern
+        public StringSplitterNonAlloc Split(string pattern, Func<char, bool> charsValidator = null)
+        {
+            return new StringSplitterNonAlloc(this, pattern, charsValidator);
+        }
+
         public override string ToString()
         {
             if (Length == -1)

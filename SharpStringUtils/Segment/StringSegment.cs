@@ -6,7 +6,9 @@ namespace LambdaTheDev.SharpStringUtils.Segment
     public readonly partial struct StringSegment
     {
         public static readonly StringSegment Null = new StringSegment(null, 0, -1);
-        
+        public static readonly StringSegment Empty = new StringSegment(string.Empty, 0, 0);
+
+
         public readonly string TargetString;
         public readonly int Offset;
         public readonly int Length;
