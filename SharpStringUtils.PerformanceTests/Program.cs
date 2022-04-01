@@ -1,5 +1,4 @@
-﻿using BenchmarkDotNet.Running;
-using LambdaTheDev.SharpStringUtils.PerformanceTests.Splitter;
+﻿using System;
 
 namespace LambdaTheDev.SharpStringUtils.PerformanceTests
 {
@@ -7,7 +6,7 @@ namespace LambdaTheDev.SharpStringUtils.PerformanceTests
     {
         private static void Main()
         {
-            BenchmarkRunner.Run<StringSplitterNonAllocTests>();
+            Console.WriteLine("Performance & memory tests will be re-implemented later!");
         }
     }
 }
