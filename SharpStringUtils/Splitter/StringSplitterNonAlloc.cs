@@ -51,7 +51,8 @@ namespace LambdaTheDev.SharpStringUtils.Splitter
             {
                 if (!PatternSplittersPool.TryPop(out PatternSplitter splitter))
                     splitter = new PatternSplitter();
-                
+
+                splitter.Pattern = _pattern;
                 result = splitter;
             }
             
