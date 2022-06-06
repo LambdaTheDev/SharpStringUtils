@@ -1,3 +1,6 @@
+# !!! DEPRECATED !!!
+This library is now deprecated & won't be supported/updated. My recommendation is to use ZString library: https://github.com/Cysharp/ZString.
+
 # SharpStringUtils
 SharpStringUtils is a library that lets you perform high performance or/and non-alloc operations on C# strings.
 
